@@ -10,6 +10,8 @@ namespace SAS.Models
 
         public int TeamSize { get; set; }
 
+        public int MinPlayersPerCategory { get; set; }
+
         #endregion
     }
 }

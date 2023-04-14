@@ -9,16 +9,17 @@ namespace SAS.Managers
     {
         #region Properties
 
-        List<PlayerModel> Players { get; set; }
+        public List<PlayerModel> Players { get; set; } = new List<PlayerModel>();
 
         #endregion
 
         #region Methods
 
         // Start is called before the first frame update
-        void Start()
+        protected override void Awake()
         {
-            Players = new List<PlayerModel>();
+            base.Awake();
+            //Players = new List<PlayerModel>();
         }
 
         // Update is called once per frame
@@ -35,6 +36,15 @@ namespace SAS.Managers
         public bool RemovePlayer(PlayerModel player)
         {
             return Players.Remove(player);
+        }
+
+        public void PrintPlayers()
+        {
+            Debug.LogFormat("DEBUG... Number of players: {0}", Players.Count);
+            foreach(var player in Players)
+            {
+                Debug.LogFormat("DEBUG... Player name: {0}", player.Name);
+            }
         }
 
         #endregion

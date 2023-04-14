@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,51 +10,113 @@ namespace SAS.Managers
     {
         #region Properties
 
-        List<TeamModel> Teams { get; set; }
+        int TeamCount = 0;
+		public List<TeamModel> Teams { get; set; } = new List<TeamModel>();
 
         #endregion
 
         #region Methods
 
         // Start is called before the first frame update
-        void Start()
+        protected override void Awake()
         {
-            Teams = new List<TeamModel>();
+			base.Awake();
+
+			// Add default team
+			TeamModel model = new TeamModel();
+			Teams.Add(model);
+			model.Name = string.Format("Team {0}", Teams.Count);
+		}
+
+		public void AddTeam()
+        {
+			TeamModel model = new TeamModel();
+			Teams.Add(model);
+			model.Name = string.Format("Team {0}", Teams.Count);
+			Debug.LogFormat("DEBUG... Adding team: {0}", model.Name);
+        }
+		
+		public void RemoveTeam()
+        {
+			// Remove team at the end of the list
+			Teams.RemoveAt(Teams.Count - 1);
         }
 
-        // Update is called once per frame
-        void Update()
-        {
+		public List<TeamModel> GenerateTeamsWithCategories(List<CategoryModel> categories, int numTeams)
+		{
+			// Shuffle the players in each category
+			System.Random rng = new System.Random();
+			foreach (var c in categories)
+			{
+				Shuffle(c.Players, rng);
+				c.Print();
+			}
 
-        }
+			// Divide the players into teams, ensuring that each team has players from every category
+			//for (int i = 0; i < numTeams; i++)
+			//{
+			//	Teams.Add(new TeamModel());
+			//}
 
-        /// <summary>
-        /// Generate teams of specified size according to random numbers assigned
-        /// to each player within a category
-        /// </summary>
-        /// <returns>Number of teams</returns>
-        public int GenerateTeams()
-        {
-            System.Random rng = new System.Random();
+			int numCategories = categories.Count;
+			int[] categoryIndices = Enumerable.Range(0, numCategories).ToArray();
+			Shuffle(categoryIndices, rng);
+			int teamIndex = 0;
+			foreach (int categoryIndex in categoryIndices)
+			{
+				CategoryModel category = categories.ElementAt(categoryIndex);
+				List<PlayerModel> categoryPlayers = category.Players;
+				int numPlayers = categoryPlayers.Count;
+				int teamSize = numPlayers / numTeams;
+				int remainder = numPlayers % numTeams;
+				int startIndex = 0;
+				for (int i = 0; i < numTeams; i++)
+				{
+					int endIndex = startIndex + teamSize + (i < remainder ? 1 : 0); // add one extra player to the first 'remainder' teams
+					TeamModel team = Teams[(teamIndex + i) % numTeams];
+					for (int j = startIndex; j < endIndex; j++)
+					{
+						//team.Add((categoryPlayers[j], category));
+						team.AddPlayer(categoryPlayers[j]);
+					}
+					startIndex = endIndex;
+				}
+				teamIndex = (teamIndex + remainder) % numTeams;
+			}
 
-            List<CategoryModel> categories = CategoryManager.Instance.Categories;
+			// Shuffle the order of the teams
+			Shuffle(Teams, rng);
 
-            // Give each player in each category a random number between 1 and 100 
-            foreach (var category in categories)
-            {
-                foreach (var player in category.Players)
-                {
-                    player.RandomNumberSeed = rng.Next(1, 101);
-                }
+			return Teams;
+		}
 
-                // Sort the players by random number
-                List<PlayerModel> sortedList = category.Players.OrderBy(x => x.RandomNumberSeed).ToList();
-                category.Players = sortedList;
-            }
+		static void Shuffle<T>(List<T> list, System.Random rng)
+		{
+			// Fisher-Yates shuffle algorithm
+			int n = list.Count;
+			while (n > 1)
+			{
+				n--;
+				int k = rng.Next(n + 1);
+				T temp = list[k];
+				list[k] = list[n];
+				list[n] = temp;
+			}
+		}
 
-
-            return 0;
-        }
+		static void Shuffle(int[] list, System.Random rng)
+		{
+			// Fisher-Yates shuffle algorithm
+			int n = list.Count();
+			while (n > 1)
+			{
+				n--;
+				int k = rng.Next(n + 1);
+				int value = list[k];
+				list[k] = list[n];
+				list[n] = value;
+			}
+		}
 
         #endregion
     }

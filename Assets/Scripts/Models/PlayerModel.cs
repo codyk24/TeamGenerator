@@ -17,6 +17,17 @@ namespace SAS.Models
         public int RandomNumberSeed { get; set; }
 
         #endregion
+
+        #region Constructors
+
+        public PlayerModel() { }
+
+        public PlayerModel(string name)
+        {
+            Name = name;
+        }
+
+        #endregion
     }
 }
 

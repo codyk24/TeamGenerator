@@ -10,7 +10,7 @@ namespace SAS.Models
 
         public string Name { get; set; }
 
-        public List<PlayerModel> Players { get; set; }
+        public List<PlayerModel> Players { get; set; } = new List<PlayerModel>();
 
         public int Size { get; set; }
 
@@ -43,6 +43,17 @@ namespace SAS.Models
         public bool RemovePlayer(PlayerModel player)
         {
             return Players.Remove(player);
+        }
+
+        public void Print()
+        {
+            string teamString = string.Format("{0}: ", Name);
+            foreach (var player in Players)
+            {
+                teamString += player.Name + ", \n";
+            }
+
+            Debug.LogFormat(teamString);
         }
 
         #endregion
