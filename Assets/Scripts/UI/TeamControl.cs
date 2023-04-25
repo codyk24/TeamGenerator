@@ -3,6 +3,7 @@ using SAS.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -45,11 +46,7 @@ public class TeamControl : MonoBehaviour
         Debug.LogFormat("DEBUG... Add team listener reached...");
         TeamManager.Instance.AddTeam();
 
-        // Update the number categories text
-        m_numberTeamsLabel.text = CategoryManager.Instance.Categories.Count.ToString();
-
-        // Enable the minus button if there's more than one category
-        m_minusButton.interactable = CategoryManager.Instance.Categories.Count > 1;
+        StartCoroutine(UpdateTeamCountText());
     }
 
     private void RemoveTeam()
@@ -57,14 +54,21 @@ public class TeamControl : MonoBehaviour
         // Remove the last team in the list
         TeamManager.Instance.RemoveTeam();
 
+        StartCoroutine(UpdateTeamCountText());
+
+        // After removing, update the lastCategory reference
+        //m_lastTeam = m_teamPanel.transform.GetChild(CategoryManager.Instance.Categories.Count - 1).gameObject;
+    }
+
+    private IEnumerator UpdateTeamCountText()
+    {
+        yield return new WaitForEndOfFrame();
+
         // Update the number categories text
         m_numberTeamsLabel.text = TeamManager.Instance.Teams.Count.ToString();
 
         // Enable the minus button if there's more than one category
         m_minusButton.interactable = CategoryManager.Instance.Categories.Count > 1;
-
-        // After removing, update the lastCategory reference
-        //m_lastTeam = m_teamPanel.transform.GetChild(CategoryManager.Instance.Categories.Count - 1).gameObject;
     }
 
     public void GenerateTeams()
@@ -75,8 +79,10 @@ public class TeamControl : MonoBehaviour
             CategoryManager.Instance.Categories, 
             TeamManager.Instance.Teams.Count);
 
+        var orderedTeams = teams.OrderBy(team => team.Name);
+
         // Do stuff with the teams...
-        foreach(var team in teams)
+        foreach(var team in orderedTeams)
         {
             team.Print();
 

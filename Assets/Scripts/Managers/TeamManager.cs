@@ -42,6 +42,15 @@ namespace SAS.Managers
 			Teams.RemoveAt(Teams.Count - 1);
         }
 
+		public void ResetTeams()
+        {
+			// Remove the players from the team model
+			foreach (var team in Teams)
+            {
+				team.ClearPlayers();
+            }
+		}
+
 		public List<TeamModel> GenerateTeamsWithCategories(List<CategoryModel> categories, int numTeams)
 		{
 			// Shuffle the players in each category

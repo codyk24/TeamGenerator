@@ -45,6 +45,11 @@ namespace SAS.Models
             return Players.Remove(player);
         }
 
+        public void ClearPlayers()
+        {
+            Players.Clear();
+        }
+
         public void Print()
         {
             string teamString = string.Format("{0}: ", Name);
