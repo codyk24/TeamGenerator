@@ -49,7 +49,10 @@ public class CategoryControl : MonoBehaviour
         // Enable the minus button if there's more than one category
         m_minusButton.interactable = CategoryManager.Instance.Categories.Count > 1;
 
-        StartCoroutine(Redraw());
+        if (gameObject.activeInHierarchy)
+        {
+            StartCoroutine(Redraw());
+        }
     }
 
     private void AddCategory()

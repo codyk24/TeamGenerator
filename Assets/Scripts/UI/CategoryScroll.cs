@@ -84,8 +84,8 @@ namespace SAS.UI
 
         private void TransferListeners(TMP_InputField current, TMP_InputField next)
         {
-            current.onValueChanged.RemoveAllListeners();
-            current.onEndEdit.RemoveAllListeners();
+            current.onValueChanged.RemoveListener(NameInputStart);
+            current.onEndEdit.RemoveListener(NameInputFinish);
 
             next.onValueChanged.AddListener(NameInputStart);
             next.onEndEdit.AddListener(NameInputFinish);
@@ -122,6 +122,9 @@ namespace SAS.UI
                 // Track the player model in the category
                 PlayerView view = currentNameInput.GetComponentInParent<PlayerView>();
                 m_model.Players.Add(view.Model);
+
+                // Set the category model of the player model
+                view.Model.Category = m_model;
 
                 // Instantiate next player input when you populate the current
                 nextNameInput = Instantiate(nameInputTemplate, transform);
