@@ -43,7 +43,6 @@ public class TeamControl : MonoBehaviour
 
     private void AddTeam()
     {
-        Debug.LogFormat("DEBUG... Add team listener reached...");
         TeamManager.Instance.AddTeam();
 
         StartCoroutine(UpdateTeamCountText());
@@ -55,9 +54,6 @@ public class TeamControl : MonoBehaviour
         TeamManager.Instance.RemoveTeam();
 
         StartCoroutine(UpdateTeamCountText());
-
-        // After removing, update the lastCategory reference
-        //m_lastTeam = m_teamPanel.transform.GetChild(CategoryManager.Instance.Categories.Count - 1).gameObject;
     }
 
     private IEnumerator UpdateTeamCountText()
@@ -73,7 +69,13 @@ public class TeamControl : MonoBehaviour
 
     public void GenerateTeams()
     {
-        Debug.LogFormat("DEBUG... GenerateTeams called...");
+        // Clear the team list before starting
+        TeamManager.Instance.ResetTeams();
+        for (int i = 0; i < m_teamPanel.transform.childCount; i++)
+        {
+            GameObject child = m_teamPanel.transform.GetChild(i).gameObject;
+            Destroy(child);
+        }
 
         var teams = TeamManager.Instance.GenerateTeamsWithCategories(
             CategoryManager.Instance.Categories, 

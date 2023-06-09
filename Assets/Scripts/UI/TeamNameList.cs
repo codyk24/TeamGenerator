@@ -54,12 +54,6 @@ namespace SAS.UI
             }
         }
 
-        private void OnDestroy()
-        {
-            // Remove the players from the category model
-            m_model.Players.Clear();
-        }
-
         /// <summary>
         /// Listener for when the current name input is finished
         /// </summary>
@@ -104,6 +98,8 @@ namespace SAS.UI
             {
                 Debug.LogFormat("DEBUG... Player name: {0}", player.Name);
             }
+
+            Debug.LogFormat("DEBUG... TeamManager number of teams: {0}, team manager contain model: {1}", TeamManager.Instance.Teams.Count, TeamManager.Instance.Teams.Contains(m_model));
         }
 
         #endregion

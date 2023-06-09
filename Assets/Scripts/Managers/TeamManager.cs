@@ -33,7 +33,6 @@ namespace SAS.Managers
 			TeamModel model = new TeamModel();
 			Teams.Add(model);
 			model.Name = string.Format("Team {0}", Teams.Count);
-			Debug.LogFormat("DEBUG... Adding team: {0}", model.Name);
         }
 		
 		public void RemoveTeam()
@@ -58,14 +57,7 @@ namespace SAS.Managers
 			foreach (var c in categories)
 			{
 				Shuffle(c.Players, rng);
-				c.Print();
 			}
-
-			// Divide the players into teams, ensuring that each team has players from every category
-			//for (int i = 0; i < numTeams; i++)
-			//{
-			//	Teams.Add(new TeamModel());
-			//}
 
 			int numCategories = categories.Count;
 			int[] categoryIndices = Enumerable.Range(0, numCategories).ToArray();
@@ -99,7 +91,7 @@ namespace SAS.Managers
 			return Teams;
 		}
 
-		static void Shuffle<T>(List<T> list, System.Random rng)
+		public void Shuffle<T>(List<T> list, System.Random rng)
 		{
 			// Fisher-Yates shuffle algorithm
 			int n = list.Count;
@@ -113,7 +105,7 @@ namespace SAS.Managers
 			}
 		}
 
-		static void Shuffle(int[] list, System.Random rng)
+		public void Shuffle(int[] list, System.Random rng)
 		{
 			// Fisher-Yates shuffle algorithm
 			int n = list.Count();
@@ -127,7 +119,28 @@ namespace SAS.Managers
 			}
 		}
 
-        #endregion
-    }
+		public string PrintTeams()
+        {
+			var orderedTeams = Teams.OrderBy(team => team.Name);
+			string teamString = "====================\n";
+			foreach (var team in orderedTeams)
+            {
+				team.Print();
+
+				teamString += team.Name + "\n\n";
+				foreach (var player in team.Players)
+                {
+					teamString += player.Name + "\n";
+                }
+
+				teamString += "====================\n";
+			}
+
+			Debug.Log(teamString);
+			return teamString;
+		}
+
+		#endregion
+	}
 }
 
