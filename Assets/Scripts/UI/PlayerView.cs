@@ -45,25 +45,28 @@ public class PlayerView : MonoBehaviour
 
     private void OnDestroy()
     {
+        Debug.Log("DEBUG... OnDestroy called in PlayerView");
         if (PlayerManager.Instance != null)
         {
             PlayerManager.Instance.RemovePlayer(m_model);
         }
 
-        // Redraw the scroll view after deleting
-        CategoryScroll scroll = transform.parent.gameObject.GetComponent<CategoryScroll>();
-        //StartCoroutine(scroll.Redraw());
+        if (m_model != null && m_model.Category != null)
+        {
+            // Remove the player from its category
+            m_model?.Category?.Players?.Remove(m_model);
+        }
     }
 
     public void DeletePlayer()
     {
-        if (PlayerManager.Instance.Players.Contains(m_model))
-        {
-            PlayerManager.Instance.RemovePlayer(m_model);
-        }
+        //if (PlayerManager.Instance.Players.Contains(m_model))
+        //{
+        //    PlayerManager.Instance.RemovePlayer(m_model);
+        //}
 
-        // Remove the player from its category
-        m_model.Category.Players.Remove(m_model);
+        //// Remove the player from its category
+        //m_model.Category.Players.Remove(m_model);
 
         // Delete the player input game object
         Destroy(gameObject);
