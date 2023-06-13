@@ -48,11 +48,4 @@ public class TeamOutputList : MonoBehaviour
             listClone.AddPlayers(team.Players);
         }
     }
-
-    public void ShareTeams()
-    {
-        string output = TeamManager.Instance.PrintTeams();
-
-        // Do stuff with the output --> share
-    }
 }

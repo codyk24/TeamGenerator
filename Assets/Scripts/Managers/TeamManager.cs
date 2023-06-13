@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using SAS.Models;
+using NativeShareNamespace;
 
 namespace SAS.Managers
 {
@@ -137,6 +138,11 @@ namespace SAS.Managers
 			}
 
 			Debug.Log(teamString);
+
+			NativeShare sharer = new NativeShare();
+			sharer.Clear();
+			sharer.SetText(teamString);
+			sharer.Share();
 			return teamString;
 		}
 

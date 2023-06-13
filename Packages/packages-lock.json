@@ -2,7 +2,7 @@
   "dependencies": {
     "com.unity.2d.animation": {
       "version": "5.2.0",
-      "depth": 0,
+      "depth": 1,
       "source": "registry",
       "dependencies": {
         "com.unity.2d.common": "4.2.0",
@@ -176,6 +176,13 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
+    },
+    "com.yasirkula.nativeshare": {
+      "version": "https://github.com/yasirkula/UnityNativeShare.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "2d8f526a0f452847dcd1fbd93fe0ea7c22e2d9ae"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
