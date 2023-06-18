@@ -79,7 +79,6 @@ namespace SAS.UI
             {
                 // Instantiate a player name output
                 var nameOutput = Instantiate(nameOutputTemplate, transform);
-                nameOutput.GetComponent<PlayerView>().Model = player;
                 nameOutput.GetComponentInChildren<TextMeshProUGUI>().text = player.Name;
             }
         }
