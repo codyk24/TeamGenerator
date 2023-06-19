@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using Newtonsoft.Json;
 
 namespace SAS.Models
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class PlayerModel
     {
         #region Properties
 
         public int SkillLevel { get; set; }
 
+        [JsonProperty]
         public string Name { get; set; }
 
         public CategoryModel Category { get; set; }
