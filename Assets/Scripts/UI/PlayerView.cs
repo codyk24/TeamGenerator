@@ -6,11 +6,15 @@ using SAS.Models;
 using SAS.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerView : MonoBehaviour
 {
     [SerializeField]
     private TMP_InputField nameInput;
+
+    [SerializeField]
+    private Button deleteButton;
 
     private PlayerModel m_model;
 
@@ -39,6 +43,11 @@ public class PlayerView : MonoBehaviour
             nameInput.onEndEdit.AddListener(UpdatePlayerName);
         }
 
+        if (deleteButton != null)
+        {
+            deleteButton.interactable = false;
+        }
+
         // Initialize the model
         m_model = new PlayerModel();
     }
@@ -62,14 +71,6 @@ public class PlayerView : MonoBehaviour
 
     public void DeletePlayer()
     {
-        //if (PlayerManager.Instance.Players.Contains(m_model))
-        //{
-        //    PlayerManager.Instance.RemovePlayer(m_model);
-        //}
-
-        //// Remove the player from its category
-        //m_model.Category.Players.Remove(m_model);
-
         // Delete the player input game object
         Destroy(gameObject);
     }
@@ -86,6 +87,9 @@ public class PlayerView : MonoBehaviour
             {
                 PlayerManager.Instance.AddPlayer(m_model);
             }
+
+            // Enable the player's delete button once name input
+            deleteButton.interactable = true;
         }
 
         if (transform.gameObject != null)

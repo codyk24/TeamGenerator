@@ -889,6 +889,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nameInput: {fileID: 5234719398824357635}
+  deleteButton: {fileID: 4861773541844924171}
 --- !u!1 &8746168516161910850
 GameObject:
   m_ObjectHideFlags: 0
