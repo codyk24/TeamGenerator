@@ -157,6 +157,46 @@ namespace SAS.UI
             }
         }
 
+        [ContextMenu("Clear Category")]
+        public void ClearCategory()
+        {
+            Debug.LogFormat("DEBUG... PlayerManager player count before delete: {0}, category player count: {1}", PlayerManager.Instance.Players.Count, m_model.Players.Count);
+
+            // Clear players from the category model
+            m_model.Players.Clear();
+
+            // Transfer the listeners back to initial player view before deleting players
+            TMP_InputField firstNameInput = transform.GetChild(1).GetComponentInChildren<TMP_InputField>();
+
+            TransferListeners(currentNameInput, firstNameInput);
+            currentNameInput = firstNameInput;
+
+            // Iterate over children, starting at extent of list
+            for (int i = transform.childCount - 1; i > 0; i--)
+            {
+                var playerView = transform.GetChild(i).GetComponent<PlayerView>();
+                // Destroy all players except first one in category list
+                if (i > 1)
+                {
+                    if (playerView != null)
+                    {
+                        Destroy(playerView.gameObject);
+                    }
+                }
+                // Maintain this initial player, but delete the name
+                else
+                {
+                    firstNameInput.text = string.Empty;
+                    playerView.UpdatePlayerName(string.Empty);
+                }
+            }
+
+            // Redraw after you're done deleting
+            StartCoroutine(Redraw());
+            Debug.LogFormat("DEBUG... PlayerManager player count after delete: {0}, category player count: {1}", PlayerManager.Instance.Players.Count, m_model.Players.Count);
+        }
+
+
         [ContextMenu("Save Category")]
         public void SaveCategory()
         {

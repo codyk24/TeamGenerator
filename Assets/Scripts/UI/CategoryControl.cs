@@ -1,4 +1,5 @@
 using SAS.Managers;
+using SAS.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -74,6 +75,15 @@ public class CategoryControl : MonoBehaviour
         // After removing, update the lastCategory reference
         m_lastCategory = m_categoryPanel.transform.GetChild(CategoryManager.Instance.Categories.Count - 1).gameObject;
         m_lastCategory = m_categoryPanel.transform.GetChild(0).gameObject;
+    }
+
+    public void ClearCategories()
+    {
+        // Clear the players from each category scroll in children
+        for (int i = 0; i < m_categoryPanel.transform.childCount; i++)
+        {
+            m_categoryPanel.transform.GetChild(i).GetComponent<CategoryScroll>().ClearCategory();
+        }
     }
 
     private IEnumerator Redraw()
