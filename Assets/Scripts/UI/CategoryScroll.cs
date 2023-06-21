@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using SAS.Managers;
 using SAS.Models;
 using TMPro;
-using System;
 
 namespace SAS.UI
 {
@@ -156,6 +155,12 @@ namespace SAS.UI
                     Destroy(nextNameInput);
                 }
             }
+        }
+
+        [ContextMenu("Save Category")]
+        public void SaveCategory()
+        {
+            FileDataHandler.SaveCategory(m_model);
         }
 
         public IEnumerator Redraw()
