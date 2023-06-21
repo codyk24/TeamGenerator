@@ -38,6 +38,9 @@ namespace SAS.Managers
 		
 		public void RemoveTeam()
         {
+			// Order teams by name (ascending numerical order) before deleting
+			Teams = Teams.OrderBy(team => team.Name).ToList();
+
 			// Remove team at the end of the list
 			Teams.RemoveAt(Teams.Count - 1);
         }

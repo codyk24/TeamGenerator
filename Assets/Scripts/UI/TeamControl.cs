@@ -64,7 +64,7 @@ public class TeamControl : MonoBehaviour
         m_numberTeamsLabel.text = TeamManager.Instance.Teams.Count.ToString();
 
         // Enable the minus button if there's more than one category
-        m_minusButton.interactable = CategoryManager.Instance.Categories.Count > 1;
+        m_minusButton.interactable = TeamManager.Instance.Teams.Count > 1;
     }
 
     public void GenerateTeams()
