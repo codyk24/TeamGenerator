@@ -45,7 +45,8 @@ public class PlayerView : MonoBehaviour
 
     private void OnDestroy()
     {
-        Debug.Log("DEBUG... OnDestroy called in PlayerView");
+        Debug.LogFormat("DEBUG... OnDestroy called in PlayerView");
+
         if (PlayerManager.Instance != null)
         {
             PlayerManager.Instance.RemovePlayer(m_model);
@@ -54,6 +55,7 @@ public class PlayerView : MonoBehaviour
         if (m_model != null && m_model.Category != null)
         {
             // Remove the player from its category
+            Debug.LogFormat("DEBUG... OnDestroy m_model.Category wasn't null, removing player model from category");
             m_model?.Category?.Players?.Remove(m_model);
         }
     }
@@ -72,7 +74,7 @@ public class PlayerView : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void UpdatePlayerName(string input)
+    public void UpdatePlayerName(string input)
     {
         Debug.LogFormat("DEBUG... UpdatePlayerName hit.");
         if (!string.IsNullOrEmpty(input))
@@ -86,7 +88,10 @@ public class PlayerView : MonoBehaviour
             }
         }
 
-        CategoryScroll scroll = transform.parent.gameObject.GetComponent<CategoryScroll>();
-        StartCoroutine(scroll.Redraw());
+        if (transform.gameObject != null)
+        {
+            CategoryScroll scroll = transform.parent.gameObject.GetComponent<CategoryScroll>();
+            StartCoroutine(scroll.Redraw());
+        }
     }
 }
