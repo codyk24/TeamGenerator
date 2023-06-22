@@ -86,6 +86,15 @@ public class CategoryControl : MonoBehaviour
         }
     }
 
+    public void SaveCategories()
+    {
+        // Clear the players from each category scroll in children
+        for (int i = 0; i < m_categoryPanel.transform.childCount; i++)
+        {
+            m_categoryPanel.transform.GetChild(i).GetComponent<CategoryScroll>().SaveCategory();
+        }
+    }
+
     private IEnumerator Redraw()
     {
         yield return new WaitForEndOfFrame();

@@ -12,7 +12,7 @@ namespace SAS.Models
 
         public List<PlayerModel> Players { get; set; } = new List<PlayerModel>();
 
-        public int Size { get; set; }
+        public int Size => Players.Count;
 
         #endregion
 

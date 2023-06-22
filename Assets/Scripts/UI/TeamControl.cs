@@ -97,5 +97,8 @@ public class TeamControl : MonoBehaviour
             listClone.UpdateTeamName(team.Name);
             listClone.AddPlayers(team.Players);
         }
+
+        // Save the teams to a file
+        FileDataHandler.SaveTeams();
     }
 }
