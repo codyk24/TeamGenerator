@@ -16,9 +16,14 @@ namespace SAS.UI
         // Start is called before the first frame update
         void Start()
         {
+            m_loadButton.interactable = CheckEnable();
+        }
+
+        public bool CheckEnable()
+        {
             var filePaths = Directory.EnumerateFiles(Application.persistentDataPath);
-            m_loadButton.interactable = filePaths.Any(x => x.Contains(fileNamePattern));
             Debug.LogFormat("DEBUG... Filenames contain {0}: {1}", fileNamePattern, filePaths.Any(x => x.Contains(fileNamePattern)));
+            return filePaths.Any(x => x.Contains(fileNamePattern));
         }
     }
 }

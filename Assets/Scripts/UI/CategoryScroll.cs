@@ -231,9 +231,9 @@ namespace SAS.UI
 
 
         [ContextMenu("Save Category")]
-        public void SaveCategory()
+        public bool SaveCategory()
         {
-            FileDataHandler.SaveCategory(m_model);
+            return FileDataHandler.SaveCategory(m_model);
         }
 
         public IEnumerator Redraw()

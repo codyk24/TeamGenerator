@@ -100,6 +100,11 @@ public class PlayerView : MonoBehaviour
             // Enable the player's delete button once name input
             deleteButton.interactable = true;
         }
+        else
+        {
+            deleteButton.interactable = false;
+        }
+
 
         if (transform.gameObject != null && gameObject.activeInHierarchy)
         {

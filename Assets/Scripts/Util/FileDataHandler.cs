@@ -15,7 +15,7 @@ public static class FileDataHandler
 
     public static bool SaveCategory(CategoryModel model)
     {
-        m_fileName = string.Format("category_{0}_{1}.json", model.Name.Trim(), DateTime.Now.ToString("MM'_'dd'_'yy'_'hh'_'mm"));
+        m_fileName = string.Format("category_{0}_{1}.json", model.Name.Replace(" ", string.Empty), DateTime.Now.ToString("MM'_'dd'_'yy'_'hh'_'mm"));
         try
         {
             // Create JSON from category model
@@ -54,24 +54,25 @@ public static class FileDataHandler
 
         try
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(fullFilePath));
+            //Directory.CreateDirectory(Path.GetDirectoryName(fullFilePath))
+            File.WriteAllText(fullFilePath, json);
 
             // Save the data to a file
-            using (FileStream fileStream = new FileStream(fullFilePath, FileMode.Create))
-            {
-                // Store the text in a byte array with
-                // UTF8 encoding (8-bit Unicode
-                // Transformation Format)
-                byte[] writeArr = Encoding.UTF8.GetBytes(json);
+            //using (FileStream fileStream = File.Open(fullFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Write))
+            //{
+            //    // Store the text in a byte array with
+            //    // UTF8 encoding (8-bit Unicode
+            //    // Transformation Format)
+            //    byte[] writeArr = Encoding.UTF8.GetBytes(json);
 
-                // Using the Write method write
-                // the encoded byte array to
-                // the textfile
-                fileStream.Write(writeArr, 0, json.Length);
+            //    // Using the Write method write
+            //    // the encoded byte array to
+            //    // the textfile
+            //    fileStream.Write(writeArr, 0, json.Length);
 
-                // Close the FileStream object
-                fileStream.Close();
-            }
+            //    // Close the FileStream object
+            //    fileStream.Close();
+            //}
             return true;
         }
         catch (Exception e)

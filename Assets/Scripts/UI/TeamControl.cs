@@ -99,6 +99,6 @@ public class TeamControl : MonoBehaviour
         }
 
         // Save the teams to a file
-        FileDataHandler.SaveTeams();
+        //FileDataHandler.SaveTeams();
     }
 }

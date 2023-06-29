@@ -4,6 +4,7 @@ using SAS.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -142,10 +143,14 @@ public class CategoryControl : MonoBehaviour
     public void SaveCategories()
     {
         // Clear the players from each category scroll in children
+        bool success = true;
         for (int i = 0; i < m_categoryPanel.transform.childCount; i++)
         {
-            m_categoryPanel.transform.GetChild(i).GetComponent<CategoryScroll>().SaveCategory();
+            success &= m_categoryPanel.transform.GetChild(i).GetComponent<CategoryScroll>().SaveCategory();
         }
+
+        var filePaths = Directory.EnumerateFiles(Application.persistentDataPath);
+        DialogCanvas.Instance.Show("Save Successful!", string.Format("Path: {0}, save successful: {1}", Application.persistentDataPath, success), Accent.Correct, "OK", true);
     }
 
     private IEnumerator Redraw()
