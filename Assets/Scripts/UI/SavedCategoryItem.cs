@@ -1,8 +1,10 @@
-using System.Collections;
 using System;
+using System.Linq;
 using System.IO;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using SAS.Managers;
 using SAS.Models;
 using Newtonsoft.Json;
 
@@ -19,17 +21,26 @@ namespace SAS.UI
         [SerializeField]
         private TextMeshProUGUI m_categoryDateText;
 
+        [SerializeField]
+        private Button m_button;
+
         private CategoryModel m_categoryModel;
+
+        private string m_filePath;
+
+        public string FilePath => m_filePath;
 
         // Start is called before the first frame update
         void Start()
         {
-
+            m_button.onClick.AddListener(LoadCategory);
         }
 
         // Initialize the text fields within the saved category item
         public void Initialize(string filePath)
         {
+            m_filePath = filePath;
+
             // category_Boys_06_21_23_09_10.json
             var fileName = Path.GetFileName(filePath);
             Debug.LogFormat("DEBUG... SavedCategoryItem:InitializeText: {0}", fileName);
@@ -60,6 +71,22 @@ namespace SAS.UI
             catch (Exception e)
             {
                 Debug.LogFormat("DEBUG... exception reading saved category item");
+            }
+        }
+
+        private void LoadCategory()
+        {
+            Debug.LogFormat("DEBUG... SaveCategoryItem:LoadCategory reached");
+            if (CategoryManager.Instance.Categories.Any(category => category.Name.Equals(m_categoryModel.Name)))
+            {
+                // Show an error message that a category with this name already exists
+                DialogCanvas.Show("Load Failed", "This category has not been loaded because a category with this name already exists.", Accent.Warning, "Close", null, true);
+            }
+            else
+            {
+                // Show pop-up that category has been loaded
+                DialogCanvas.Show("Load Successful", "Your category has been successfully loaded on the Create Teams page.", Accent.Correct, "Close", null, true);
+                CategoryManager.Instance.Add(m_categoryModel);
             }
         }
     }

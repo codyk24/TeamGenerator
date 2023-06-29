@@ -48,8 +48,11 @@ public class PlayerView : MonoBehaviour
             deleteButton.interactable = false;
         }
 
-        // Initialize the model
-        m_model = new PlayerModel();
+        // Initialize the model if not already
+        if (m_model == null)
+        {
+            m_model = new PlayerModel();
+        }
     }
 
     private void OnDestroy()
@@ -69,6 +72,13 @@ public class PlayerView : MonoBehaviour
         }
     }
 
+
+    public void InitializePlayer(PlayerModel model)
+    {
+        m_model = model;
+        UpdatePlayerName(model.Name);
+    }
+
     public void DeletePlayer()
     {
         // Delete the player input game object
@@ -77,7 +87,6 @@ public class PlayerView : MonoBehaviour
 
     public void UpdatePlayerName(string input)
     {
-        Debug.LogFormat("DEBUG... UpdatePlayerName hit.");
         if (!string.IsNullOrEmpty(input))
         {
             Debug.LogFormat("DEBUG... Updating player name to: {0}", input);
@@ -92,7 +101,7 @@ public class PlayerView : MonoBehaviour
             deleteButton.interactable = true;
         }
 
-        if (transform.gameObject != null)
+        if (transform.gameObject != null && gameObject.activeInHierarchy)
         {
             CategoryScroll scroll = transform.parent.gameObject.GetComponent<CategoryScroll>();
             StartCoroutine(scroll.Redraw());

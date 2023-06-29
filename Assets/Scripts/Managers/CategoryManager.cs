@@ -5,6 +5,16 @@ using SAS.Models;
 
 namespace SAS.Managers
 {
+    public class CategoryEventArgs : System.EventArgs
+    {
+        public CategoryModel model;
+
+        public CategoryEventArgs(CategoryModel model)
+        {
+            this.model = model;
+        }
+    }
+
     public class CategoryManager : BaseMonoSingleton<CategoryManager>
     {
         #region Properties
@@ -14,8 +24,8 @@ namespace SAS.Managers
 
         #region Events
 
-        public event System.EventHandler CategoryAdded;
-        public event System.EventHandler CategoryRemoved;
+        public event System.EventHandler<CategoryEventArgs> CategoryAdded;
+        public event System.EventHandler<CategoryEventArgs> CategoryRemoved;
 
         #endregion
 
@@ -29,10 +39,11 @@ namespace SAS.Managers
 
         public void Add(CategoryModel model)
         {
+            Debug.LogFormat("DEBUG... CategoryManager:Add model: {0}", model.Name);
             if (!Categories.Contains(model))
             {
                 Categories.Add(model);
-                CategoryAdded?.Invoke(this, new System.EventArgs());
+                CategoryAdded?.Invoke(this, new CategoryEventArgs(model));
             }
         }
 
@@ -40,7 +51,7 @@ namespace SAS.Managers
         {
             if (Categories.Remove(model))
             {
-                CategoryRemoved?.Invoke(this, new System.EventArgs());
+                CategoryRemoved?.Invoke(this, new CategoryEventArgs(model));
                 Debug.LogFormat("DEBUG... Category successfully removed");
                 return true;
             }

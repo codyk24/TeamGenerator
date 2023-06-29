@@ -1,8 +1,10 @@
 using SAS.Managers;
+using SAS.Models;
 using SAS.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -32,6 +34,7 @@ public class CategoryControl : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        Debug.LogFormat("DEBUG... CategoryControl:Awake reached");
         m_addButton.onClick.AddListener(AddCategory);
         m_minusButton.onClick.AddListener(RemoveCategory);
 
@@ -41,19 +44,57 @@ public class CategoryControl : MonoBehaviour
         CategoryManager.Instance.CategoryRemoved += CategoriesChanged;
     }
 
-    private void CategoriesChanged(object sender, EventArgs e)
+    /// <summary>
+    /// Check the CategoryManager for any categories not present in the list
+    /// and instantiate a CategoryScroll if not there
+    /// </summary>
+    private void OnEnable()
     {
-        Debug.LogFormat("DEBUG... CategoryControl:CategoriesChanged listener reached.");
-        // Update the number categories text
-        m_numberCategoriesLabel.text = CategoryManager.Instance.Categories.Count.ToString();
+        Debug.LogFormat("DEBUG... CategoryControl:OnEnable reached. Categories: {0}, number of scrolls: {1}", CategoryManager.Instance.Categories.Count, m_categoryPanel.transform.childCount);
+        if (m_categoryPanel.transform.childCount < 1 && CategoryManager.Instance.Categories.Count < 1)
+        {
+            AddCategory();
+        }
+        else
+        {
+            List<CategoryModel> categoriesWithViews = new List<CategoryModel>();
 
-        // Enable the minus button if there's more than one category
-        m_minusButton.interactable = CategoryManager.Instance.Categories.Count > 1;
+            // Compile list of categories with scrolls
+            for (int i = 0; i < m_categoryPanel.transform.childCount; i++)
+            {
+                var categoryScroll = m_categoryPanel.transform.GetChild(i).GetComponent<CategoryScroll>();
+                if (categoryScroll.Model != null)
+                {
+                    categoriesWithViews.Add(categoryScroll.Model);
+                    break;
+                }
+            }
+
+            var categoriesToAdd = CategoryManager.Instance.Categories.Except(categoriesWithViews);
+            // If we didn't find a category with this name
+            foreach (var category in categoriesToAdd)
+            {
+                AddCategoryFromModel(category);
+            }
+        }
 
         if (gameObject.activeInHierarchy)
         {
             StartCoroutine(Redraw());
         }
+
+        // Refresh category count at top in case listener wasn't set up yet
+        CategoriesChanged(this, EventArgs.Empty);
+    }
+
+    private void CategoriesChanged(object sender, EventArgs e)
+    {
+        Debug.LogFormat("DEBUG... CategoryControl:CategoriesChanged listener reached. Number of categories: {0}", CategoryManager.Instance.Categories.Count);
+        // Update the number categories text
+        m_numberCategoriesLabel.text = CategoryManager.Instance.Categories.Count.ToString();
+
+        // Enable the minus button if there's more than one category
+        m_minusButton.interactable = CategoryManager.Instance.Categories.Count > 1;
     }
 
     private void AddCategory()
@@ -62,6 +103,18 @@ public class CategoryControl : MonoBehaviour
         // Instantiate a new category scroll
         m_lastCategory = Instantiate(m_categoryScrollTemplate, m_categoryPanel.transform);
         m_lastCategory.transform.SetAsFirstSibling();
+
+        var scroll = m_lastCategory.GetComponent<CategoryScroll>();
+        scroll.Initialize();
+    }
+
+    public void AddCategoryFromModel(CategoryModel model)
+    {
+        // Instantiate a new category scroll 
+        var categoryScrollObject = Instantiate(m_categoryScrollTemplate, m_categoryPanel.transform);
+        categoryScrollObject.transform.SetAsFirstSibling();
+        var scroll = categoryScrollObject.GetComponent<CategoryScroll>();
+        scroll.InitializeFromModel(model);
     }
 
     private void RemoveCategory()

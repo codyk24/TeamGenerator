@@ -51,14 +51,6 @@ namespace SAS.UI
                 categoryNameInput.onEndEdit.AddListener(UpdateCategoryName);
             }
 
-            // Create a category model to track
-            m_model = new CategoryModel();
-            CategoryManager.Instance.Add(m_model);
-
-            // Initialize the category name based on number of categories
-            string categoryName = string.Format("Category {0}", CategoryManager.Instance.Categories.Count);
-            m_model.Name = categoryNameInput.text = categoryName;
-
             if (currentNameInput != null)
             {
                 currentNameInput.onValueChanged.AddListener(NameInputStart);
@@ -79,6 +71,47 @@ namespace SAS.UI
 
             // Remove category from the category manager
             CategoryManager.Instance.Remove(m_model);
+        }
+
+        public void Initialize()
+        {
+            m_model = new CategoryModel();
+            CategoryManager.Instance.Add(m_model);
+
+            // Initialize the category name based on number of categories
+            string categoryName = string.Format("Category {0}", CategoryManager.Instance.Categories.Count);
+            m_model.Name = categoryNameInput.text = categoryName;
+        }
+
+        public void InitializeFromModel(CategoryModel model)
+        {
+            // Override the original model properties
+            m_model = model;
+
+            // Populate the category name
+            UpdateCategoryName(model.Name);
+            categoryNameInput.text = m_model.Name;
+
+            // Populate the player views in the category scroll
+            foreach (var player in model.Players)
+            {
+                // Instantiate next player input at the top of list
+                var nameInput = Instantiate(nameInputTemplate, transform);
+                nameInput.transform.SetSiblingIndex(1);
+
+                var view = nameInput.GetComponent<PlayerView>();
+                nameInput.GetComponentInChildren<TMP_InputField>().text = player.Name;
+                view.InitializePlayer(player);
+            }
+
+            // Redraw after initializing all players
+            if (gameObject.activeInHierarchy)
+            {
+                StartCoroutine(Redraw());
+            }
+
+            // Transfer listeners to the empty if necessary
+
         }
 
         private void TransferListeners(TMP_InputField current, TMP_InputField next)
