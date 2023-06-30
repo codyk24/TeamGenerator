@@ -39,26 +39,22 @@ namespace SAS.UI
             Debug.LogFormat("DEBUG... Application.PersistentDataPath: {0}", m_dataPath);
 
             int childCount = m_savedCategoriesPanel.transform.childCount;
-            // Check if we need to populate, or if already done
-            if (files.Count() > childCount)
+            // Destroy all children and start fresh
+            for (int i = 0; i < childCount; i++)
             {
-                // Destroy all children and start fresh
-                for (int i = 0; i < childCount; i++)
-                {
-                    Destroy(m_savedCategoriesPanel.transform.GetChild(i).gameObject);
-                }
+                Destroy(m_savedCategoriesPanel.transform.GetChild(i).gameObject);
+            }
 
-                // Ready to initialize now
-                foreach (var filePath in files)
-                {
-                    Debug.LogFormat("DEBUG... PopulateListFromFiles, category file: {0}", filePath);
-                    // Create a new TeamNameList for each team
-                    var savedCategoryObject = Instantiate(m_savedCategoryTemplate, m_savedCategoriesPanel.transform);
+            // Ready to initialize now
+            foreach (var filePath in files)
+            {
+                Debug.LogFormat("DEBUG... PopulateListFromFiles, category file: {0}", filePath);
+                // Create a new TeamNameList for each team
+                var savedCategoryObject = Instantiate(m_savedCategoryTemplate, m_savedCategoriesPanel.transform);
 
-                    // Add the players to the team name list
-                    var savedCategoryClone = savedCategoryObject.GetComponent<SavedCategoryItem>();
-                    savedCategoryClone.Initialize(filePath);
-                }
+                // Add the players to the team name list
+                var savedCategoryClone = savedCategoryObject.GetComponent<SavedCategoryItem>();
+                savedCategoryClone.Initialize(filePath);
             }
         }
     }

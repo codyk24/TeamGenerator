@@ -12,7 +12,7 @@ namespace SAS.Models
         public int SkillLevel { get; set; }
 
         [JsonProperty]
-        public string Name { get; set; }
+        public string Name;
 
         public CategoryModel Category { get; set; }
 

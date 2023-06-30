@@ -149,8 +149,7 @@ public class CategoryControl : MonoBehaviour
             success &= m_categoryPanel.transform.GetChild(i).GetComponent<CategoryScroll>().SaveCategory();
         }
 
-        var filePaths = Directory.EnumerateFiles(Application.persistentDataPath);
-        DialogCanvas.Instance.Show("Save Successful!", string.Format("Path: {0}, save successful: {1}", Application.persistentDataPath, success), Accent.Correct, "OK", true);
+        DialogCanvas.Instance.Show("Save Successful!", "These categories can be loaded in subsequent sessions from the Load Category page", Accent.Correct, "OK", true);
     }
 
     private IEnumerator Redraw()

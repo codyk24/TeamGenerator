@@ -8,8 +8,8 @@ namespace SAS.Models
     {
         #region Properties
 
-        public string Name { get; set; }
-        public List<PlayerModel> Players { get; set; }
+        public string Name;
+        public List<PlayerModel> Players;
         public int CategorySize => Players.Count;
 
         #endregion

@@ -8,9 +8,9 @@ namespace SAS.Models
     {
         #region Properties
 
-        public string Name { get; set; }
+        public string Name;
 
-        public List<PlayerModel> Players { get; set; } = new List<PlayerModel>();
+        public List<PlayerModel> Players = new List<PlayerModel>();
 
         public int Size => Players.Count;
 
@@ -29,7 +29,7 @@ namespace SAS.Models
             double totalSkillLevel = 0;
             foreach (var player in Players)
             {
-                totalSkillLevel += player.SkillLevel;
+                //totalSkillLevel += player.SkillLevel;
             }
 
             return totalSkillLevel / Players.Count;
