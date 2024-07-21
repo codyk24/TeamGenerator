@@ -1,15 +1,28 @@
 using SAS.Managers;
+using SAS.Models;
 using SAS.UI;
 using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TeamOutputList : MonoBehaviour
 {
+    #region Members
+
     [SerializeField]
     private GameObject m_teamPanel;
     
     [SerializeField]
     private GameObject m_teamNameListTemplate;
+
+    #endregion
+
+    #region Methods
+
+    private void Awake()
+    {
+        TeamManager.Instance.TeamListChanged += TeamsChanged;
+    }
 
     public void ClearTeamList()
     {
@@ -24,7 +37,7 @@ public class TeamOutputList : MonoBehaviour
     public void RegenerateTeams()
     {
         // Clear the players from each team in the TeamManager
-        TeamManager.Instance.ResetTeams();
+        TeamManager.Instance.ClearTeamPlayerLists();
 
         ClearTeamList();
 
@@ -34,9 +47,26 @@ public class TeamOutputList : MonoBehaviour
             TeamManager.Instance.Teams.Count);
 
         var orderedTeams = teams.OrderBy(team => team.Name);
+        UpdateTeamsList(orderedTeams);
 
+        TeamEventManager.Instance.SaveEventJson();
+    }
+
+    // Handler to populate the teams list from external changes to the team manager
+    // e.g. Loading an event from disk
+    private void TeamsChanged(object sender, TeamListEventArgs e)
+    {
+        // Clear the list of existing teams when loading
+        ClearTeamList();
+
+        var orderedTeams = e.teams.OrderBy(team => team.Name);
+        UpdateTeamsList(orderedTeams);
+    }
+
+    private void UpdateTeamsList(IEnumerable<TeamModel> teams)
+    {
         // Do stuff with the teams...
-        foreach (var team in orderedTeams)
+        foreach (var team in teams)
         {
             // Create a new TeamNameList for each team
             var teamNameList = Instantiate(m_teamNameListTemplate, m_teamPanel.transform);
@@ -48,4 +78,6 @@ public class TeamOutputList : MonoBehaviour
             listClone.AddPlayers(team.Players);
         }
     }
+
+    #endregion
 }

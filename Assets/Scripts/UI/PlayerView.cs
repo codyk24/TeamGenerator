@@ -81,6 +81,10 @@ public class PlayerView : MonoBehaviour
 
     public void DeletePlayer()
     {
+        // Grab the parent prior to deleting the game object
+        var scroll = GetComponentInParent<CategoryScroll>();
+        scroll.DecrementPlayerCountText();
+
         // Delete the player input game object
         Destroy(gameObject);
     }

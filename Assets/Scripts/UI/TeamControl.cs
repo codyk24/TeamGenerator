@@ -8,7 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TeamControl : MonoBehaviour
+public class TeamControl : BaseMonoSingleton<TeamControl>
 {
     #region Fields
 
@@ -33,12 +33,20 @@ public class TeamControl : MonoBehaviour
 
     #endregion
     // Start is called before the first frame update
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
+        Debug.LogFormat("DEBUG... TeamControl.Awake reached");
         m_addButton.onClick.AddListener(AddTeam);
         m_minusButton.onClick.AddListener(RemoveTeam);
 
         m_minusButton.interactable = false;
+    }
+
+    private void OnEnable()
+    {
+        StartCoroutine(UpdateTeamCountText());
     }
 
     private void AddTeam()
@@ -70,7 +78,7 @@ public class TeamControl : MonoBehaviour
     public void GenerateTeams()
     {
         // Clear the team list before starting
-        TeamManager.Instance.ResetTeams();
+        TeamManager.Instance.ClearTeamPlayerLists();
         for (int i = 0; i < m_teamPanel.transform.childCount; i++)
         {
             GameObject child = m_teamPanel.transform.GetChild(i).gameObject;
@@ -99,6 +107,6 @@ public class TeamControl : MonoBehaviour
         }
 
         // Save the teams to a file
-        //FileDataHandler.SaveTeams();
+        TeamEventManager.Instance.SaveEventJson();
     }
 }

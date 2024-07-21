@@ -10,7 +10,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CategoryControl : MonoBehaviour
+public class CategoryControl : BaseMonoSingleton<CategoryControl>
 {
     #region Fields
 
@@ -32,9 +32,12 @@ public class CategoryControl : MonoBehaviour
     private GameObject m_lastCategory;
 
     #endregion
+
     // Start is called before the first frame update
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         Debug.LogFormat("DEBUG... CategoryControl:Awake reached");
         m_addButton.onClick.AddListener(AddCategory);
         m_minusButton.onClick.AddListener(RemoveCategory);
@@ -55,25 +58,25 @@ public class CategoryControl : MonoBehaviour
         if (m_categoryPanel.transform.childCount < 1 && CategoryManager.Instance.Categories.Count < 1)
         {
             AddCategory();
+            CategoriesChanged(this, EventArgs.Empty);
         }
-        else
+        else if (CategoryManager.Instance.Categories.Count > 1)
         {
-            List<CategoryModel> categoriesWithViews = new List<CategoryModel>();
-
-            // Compile list of categories with scrolls
+            // Grab the original categories on the panel
+            List<GameObject> originalCategories = new List<GameObject>();
             for (int i = 0; i < m_categoryPanel.transform.childCount; i++)
             {
-                var categoryScroll = m_categoryPanel.transform.GetChild(i).GetComponent<CategoryScroll>();
-                if (categoryScroll.Model != null)
-                {
-                    categoriesWithViews.Add(categoryScroll.Model);
-                    break;
-                }
+                originalCategories.Add(m_categoryPanel.transform.GetChild(i).gameObject);
             }
 
-            var categoriesToAdd = CategoryManager.Instance.Categories.Except(categoriesWithViews);
-            // If we didn't find a category with this name
-            foreach (var category in categoriesToAdd)
+            // The categories that were there to start, remove them from the bottom of the list
+            for (int i = 0; i < originalCategories.Count; i++)
+            {
+                Destroy(originalCategories[i]);
+            }
+
+            // Add all the categories in the manager
+            foreach (var category in CategoryManager.Instance.Categories)
             {
                 AddCategoryFromModel(category);
             }
@@ -111,17 +114,25 @@ public class CategoryControl : MonoBehaviour
 
     public void AddCategoryFromModel(CategoryModel model)
     {
-        // Instantiate a new category scroll 
+        // Instantiate a new category scroll
         var categoryScrollObject = Instantiate(m_categoryScrollTemplate, m_categoryPanel.transform);
         categoryScrollObject.transform.SetAsFirstSibling();
         var scroll = categoryScrollObject.GetComponent<CategoryScroll>();
         scroll.InitializeFromModel(model);
+        m_lastCategory = categoryScrollObject;
     }
 
     private void RemoveCategory()
     {
         // Enable the minus button if there's more than one category
         m_minusButton.interactable = CategoryManager.Instance.Categories.Count > 1;
+
+        // Remove the model from the category manager
+        var categoryScroll = m_lastCategory.GetComponent<CategoryScroll>();
+        if (categoryScroll.Model != null)
+        {
+            CategoryManager.Instance.Remove(categoryScroll.Model);
+        }
 
         // Remove the last category scroll in the list
         Destroy(m_lastCategory);
@@ -131,7 +142,15 @@ public class CategoryControl : MonoBehaviour
         m_lastCategory = m_categoryPanel.transform.GetChild(0).gameObject;
     }
 
-    public void ClearCategories()
+    private void ClearCategoryList()
+    {
+        for (int i = 0; i < m_categoryPanel.transform.childCount; i++)
+        {
+            Destroy(m_categoryPanel.transform.GetChild(i));
+        }
+    }
+
+    public void ClearCategoryNames()
     {
         // Clear the players from each category scroll in children
         for (int i = 0; i < m_categoryPanel.transform.childCount; i++)

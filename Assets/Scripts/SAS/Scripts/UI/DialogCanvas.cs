@@ -251,7 +251,7 @@ namespace SAS.UI
 					return m_directionalColor;
 
 				case Accent.Caution:
-					return m_warningColor;
+					return m_cautionColor;
 
 				case Accent.Warning:
 					return m_warningColor;

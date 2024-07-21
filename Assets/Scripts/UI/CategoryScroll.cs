@@ -21,13 +21,20 @@ namespace SAS.UI
 
         [SerializeField]
         private TMP_InputField categoryNameInput;
-        
+
         /// <summary>
         /// The bottom name input in the category, used to track
         /// population of the next player name input in the list
         /// </summary>
         [SerializeField]
         private TMP_InputField currentNameInput;
+
+        /// <summary>
+        /// The bottom name input in the category, used to track
+        /// population of the next player name input in the list
+        /// </summary>
+        [SerializeField]
+        private TMP_Text playerCount;
 
         private GameObject nextNameInput;
 
@@ -70,7 +77,7 @@ namespace SAS.UI
             m_model.Players.Clear();
 
             // Remove category from the category manager
-            CategoryManager.Instance.Remove(m_model);
+            //CategoryManager.Instance.Remove(m_model);
         }
 
         public void Initialize()
@@ -81,6 +88,8 @@ namespace SAS.UI
             // Initialize the category name based on number of categories
             string categoryName = string.Format("Category {0}", CategoryManager.Instance.Categories.Count);
             m_model.Name = categoryNameInput.text = categoryName;
+
+            playerCount.text = string.Format("Player Count: {0}", m_model.Players.Count);
         }
 
         public void InitializeFromModel(CategoryModel model)
@@ -91,13 +100,14 @@ namespace SAS.UI
             // Populate the category name
             UpdateCategoryName(model.Name);
             categoryNameInput.text = m_model.Name;
+            UpdatePlayerCountText();
 
             // Populate the player views in the category scroll
             foreach (var player in model.Players)
             {
                 // Instantiate next player input at the top of list
                 var nameInput = Instantiate(nameInputTemplate, transform);
-                nameInput.transform.SetSiblingIndex(1);
+                nameInput.transform.SetSiblingIndex(transform.childCount - 1);
 
                 var view = nameInput.GetComponent<PlayerView>();
                 nameInput.GetComponentInChildren<TMP_InputField>().text = player.Name;
@@ -160,6 +170,7 @@ namespace SAS.UI
 
                 // Instantiate next player input when you populate the current
                 nextNameInput = Instantiate(nameInputTemplate, transform);
+                nextNameInput.transform.SetSiblingIndex(1);
                 StartCoroutine(Redraw());
             }
         }
@@ -188,6 +199,8 @@ namespace SAS.UI
                     Destroy(nextNameInput);
                 }
             }
+
+            UpdatePlayerCountText();
         }
 
         [ContextMenu("Clear Category")]
@@ -227,6 +240,16 @@ namespace SAS.UI
             // Redraw after you're done deleting
             StartCoroutine(Redraw());
             Debug.LogFormat("DEBUG... PlayerManager player count after delete: {0}, category player count: {1}", PlayerManager.Instance.Players.Count, m_model.Players.Count);
+        }
+
+        public void UpdatePlayerCountText()
+        {
+            playerCount.text = string.Format("Player Count: {0}", m_model.Players.Count);
+        }
+
+        public void DecrementPlayerCountText()
+        {
+            playerCount.text = string.Format("Player Count: {0}", m_model.Players.Count - 1);
         }
 
 

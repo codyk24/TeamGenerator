@@ -29,7 +29,24 @@ public static class FileDataHandler
         }
         return true;
     }
-    
+
+    public static bool SaveCategories()
+    {
+        m_fileName = string.Format("categoryList_{0}.json", DateTime.Now.ToString("MM'_'dd'_'yy'_'hh'_'mm"));
+        try
+        {
+            // Create JSON from category model
+            string categoriesJson = JsonConvert.SerializeObject(CategoryManager.Instance.Categories, Formatting.Indented);
+            Debug.LogFormat("DEBUG... Category model JSON string: {0}", categoriesJson);
+            WriteJSONToFile(categoriesJson);
+        }
+        catch (Exception e)
+        {
+            Debug.LogFormat("DEBUG... Error occurred saving category model with message: {0}", e.Message);
+        }
+        return true;
+    }
+
     public static bool SaveTeams()
     {
         m_fileName = string.Format("teamsList_{0}.json", DateTime.Now.ToString("MM'_'dd'_'yy'_'hh'_'mm"));
@@ -42,7 +59,24 @@ public static class FileDataHandler
         }
         catch (Exception e)
         {
-            Debug.LogFormat("DEBUG... Error occurred saving category model with message: {1}", e.Message);
+            Debug.LogFormat("DEBUG... Error occurred saving category model with message: {0}", e.Message);
+        }
+        return true;
+    }
+
+    public static bool SaveEventJson()
+    {
+        m_fileName = string.Format("event_{0}_{1}.json", TeamEventManager.Instance.EventModel.Name.Replace(" ", string.Empty), DateTime.Now.ToString("MM'_'dd'_'yy"));
+        try
+        {
+            // Create JSON from category model
+            string eventJson = JsonConvert.SerializeObject(TeamEventManager.Instance.EventModel, Formatting.Indented);
+            Debug.LogFormat("DEBUG... Event JSON path: {0} string: {1}", m_fileName, eventJson);
+            WriteJSONToFile(eventJson);
+        }
+        catch (Exception e)
+        {
+            Debug.LogFormat("DEBUG... Error occurred saving category model with message: {0}", e.Message);
         }
         return true;
     }

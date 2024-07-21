@@ -7,19 +7,35 @@ using NativeShareNamespace;
 
 namespace SAS.Managers
 {
-    public class TeamManager : BaseMonoSingleton<TeamManager>
+	public class TeamListEventArgs : EventArgs
+	{
+		public List<TeamModel> teams;
+
+		public TeamListEventArgs(List<TeamModel> teams)
+		{
+			this.teams = teams;
+		}
+	}
+
+	public class TeamManager : BaseMonoSingleton<TeamManager>
     {
         #region Properties
 
         int TeamCount = 0;
 		public List<TeamModel> Teams { get; set; } = new List<TeamModel>();
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Events
 
-        // Start is called before the first frame update
-        protected override void Awake()
+		public event EventHandler<TeamListEventArgs> TeamListChanged;
+
+		#endregion
+
+		#region Methods
+
+		// Start is called before the first frame update
+		protected override void Awake()
         {
 			base.Awake();
 
@@ -34,8 +50,13 @@ namespace SAS.Managers
 			TeamModel model = new TeamModel();
 			Teams.Add(model);
 			model.Name = string.Format("Team {0}", Teams.Count);
-        }
-		
+		}
+
+		public void AddTeam(TeamModel model)
+		{
+			Teams.Add(model);
+		}
+
 		public void RemoveTeam()
         {
 			// Order teams by name (ascending numerical order) before deleting
@@ -45,13 +66,36 @@ namespace SAS.Managers
 			Teams.RemoveAt(Teams.Count - 1);
         }
 
+		/// <summary>
+        /// Method to clear the list of teams
+        /// </summary>
 		public void ResetTeams()
+        {
+			Teams.Clear();
+        }
+
+		/// <summary>
+        /// Method to clear the player list of all teams
+        /// </summary>
+		public void ClearTeamPlayerLists()
         {
 			// Remove the players from the team model
 			foreach (var team in Teams)
             {
 				team.ClearPlayers();
             }
+		}
+
+		/// <summary>
+        /// Method to set the list of teams as a whole from disk
+        /// </summary>
+        /// <param name="categories"></param>
+        /// <param name="numTeams"></param>
+        /// <returns></returns>
+        public void SetTeamList(IEnumerable<TeamModel> teams)
+        {
+			Teams = teams.ToList();
+			TeamListChanged?.Invoke(this, new TeamListEventArgs(teams.ToList()));
 		}
 
 		public List<TeamModel> GenerateTeamsWithCategories(List<CategoryModel> categories, int numTeams)

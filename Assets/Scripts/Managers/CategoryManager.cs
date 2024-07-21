@@ -1,4 +1,4 @@
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using SAS.Models;
@@ -15,6 +15,16 @@ namespace SAS.Managers
         }
     }
 
+    public class CategoryListEventArgs : System.EventArgs
+    {
+        public List<CategoryModel> categories;
+
+        public CategoryListEventArgs(List<CategoryModel> models)
+        {
+            this.categories = models;
+        }
+    }
+
     public class CategoryManager : BaseMonoSingleton<CategoryManager>
     {
         #region Properties
@@ -26,6 +36,7 @@ namespace SAS.Managers
 
         public event System.EventHandler<CategoryEventArgs> CategoryAdded;
         public event System.EventHandler<CategoryEventArgs> CategoryRemoved;
+        public event System.EventHandler<CategoryListEventArgs> CategoryListChanged;
 
         #endregion
 
@@ -62,6 +73,16 @@ namespace SAS.Managers
             }
         }
 
+        public void ClearCategories()
+        {
+            foreach (var category in Categories)
+            {
+                CategoryRemoved?.Invoke(this, new CategoryEventArgs(category));
+            }
+
+            Categories.Clear();
+        }
+
         public int SmallestCategory()
         {
             int minCategorySize = int.MaxValue;
@@ -74,6 +95,12 @@ namespace SAS.Managers
             }
 
             return minCategorySize;
+        }
+
+        public void SetCategoryList(IEnumerable<CategoryModel> categories)
+        {
+            Categories = categories.ToList();
+            CategoryListChanged?.Invoke(this, new CategoryListEventArgs(categories.ToList()));
         }
 
         #endregion
